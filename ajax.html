@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>My Meged PRs</title>
+</head>
+<body>
+  <h1>My Merged PRs</h1>
+  <div id="merged"></div>
+
+  <script>
+    window.onload = loadMerged;
+
+    // Fetch merged PRs from Github API
+    function loadMerged() {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', 'https://api.github.com/search/issues?q=author:kylepw+is:pr+is:merged', true);
+
+      xhr.onload = function() {
+        if (this.status == 200) {
+          var merged = JSON.parse(this.responseText);
+
+          var output = '';
+          for (var i in merged.items) {
+            output +=
+            '<div class="pr">' +
+            '<a href="'+merged.items[i].html_url+'">'+merged.items[i].title+'</a>' +
+            '</div>';
+          }
+          document.getElementById('merged').innerHTML = output;
+        }
+      }
+      xhr.send();
+    }
+  </script>
+</body>
+</html>
