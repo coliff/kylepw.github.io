@@ -12,6 +12,10 @@
       {% include projects.html %}
     </div>
 
+    <div class="my-6">
+        {% include pr.html %}
+    </div>
+
     {% if site.topics %}
       <div class="my-6">
         {% include interests.html %}
@@ -39,6 +43,8 @@
         {% endunless %}
 
         {% include projects.html %}
+
+        {% include pr.html %}
 
         {% if site.topics %}
           {% include interests.html %}
