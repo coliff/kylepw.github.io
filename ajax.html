@@ -4,36 +4,68 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>My Meged PRs</title>
+  <title>My Merged PRs</title>
 </head>
 <body>
   <h1>My Merged PRs</h1>
   <div id="merged"></div>
 
   <script>
-    window.onload = loadMerged;
+  (function () {
+    var keyName = 'kylepwMerged'
 
-    // Fetch merged PRs from Github API
-    function loadMerged() {
-      var xhr = new XMLHttpRequest();
-      xhr.open('GET', 'https://api.github.com/search/issues?q=author:kylepw+is:pr+is:merged', true);
+    /* @return {string} */
+    function parseData(merged) {
+      let output = '';
+      // Check if object and not empty
+      if (merged.constructor === Object && Object.keys(merged).length != 0) {
+        for (let i in merged.items) {
+          output +=
+          '<div class="pr">' +
+          '<a href="'+merged.items[i].html_url+'" target=”_blank”>'+merged.items[i].title+'</a>' +
+          '</div>';
+        }
+      } else {
+        console.log('Failed to parse obj: ' + JSON.stringify(merged))
+      }
+      return output
+    }
+
+    /*
+    * Fetch merged PR data and display on DOM.
+    */
+    function fetchData() {
+      let xhr = new XMLHttpRequest();
+      xhr.open('GET', 'https://api.github.com/search/issues?q=is:pr+author:kylepw+archived:false+is:merged', true);
 
       xhr.onload = function() {
+        let output = '';
         if (this.status == 200) {
-          var merged = JSON.parse(this.responseText);
-
-          var output = '';
-          for (var i in merged.items) {
-            output +=
-            '<div class="pr">' +
-            '<a href="'+merged.items[i].html_url+'">'+merged.items[i].title+'</a>' +
-            '</div>';
-          }
-          document.getElementById('merged').innerHTML = output;
+          sessionStorage.setItem(keyName, this.responseText)
+          console.log('Response stored in session key '+"'"+keyName+"'")
+          output = parseData(JSON.parse(this.responseText));
+        } else {
+          console.log("Failed to fetch Github data: " + this.statusText);
+          console.log(this.responseText)
+          output = '<a href="https://github.com/pulls?q=is%3Apr+author%3Akylepw+archived%3Afalse+is%3Amerged" target=”_blank”>View</a>'
         }
+        document.getElementById('merged').innerHTML = output
       }
       xhr.send();
     }
+
+    window.onload = () => {
+      let output = '';
+      if (sessionStorage && sessionStorage.getItem(keyName)) {
+        console.log('using sessionStorage')
+        let merged = JSON.parse(sessionStorage.getItem(keyName))
+        document.getElementById('merged').innerHTML = parseData(merged);
+      } else {
+        console.log('using AJAX')
+        fetchData();
+      }
+    }
+  })();
   </script>
 </body>
 </html>
