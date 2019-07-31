@@ -1,6 +1,6 @@
 <h2 {% if site.style == 'dark' %}class="text-white"{% endif %}>My Github Contributions</h2>
 <p class="f4 mb-4 {% if site.style == 'dark' %}text-white{% else %}text-gray{% endif %}">A list of my merged pull requests.</p>
-<div class="d-flex flex-wrap gutter-condensed mb-4" id="merged"></div>
+<div class="mb-4 {% if site.style == 'dark' %}text-white{% else %}text-gray{% endif %}" id="merged"></div>
 
 <script>
 (function () {
@@ -13,9 +13,12 @@
     if (merged.constructor === Object && Object.keys(merged).length != 0) {
       for (let i in merged.items) {
         output +=
-        '<div class="pr">' +
-        '<a href="'+merged.items[i].html_url+'" target=”_blank”>'+merged.items[i].title+'</a>' +
-        '</div>';
+          '<ul class="pr" style="list-style: none;">' +
+          '<li><a href="'+merged.items[i].html_url+'" target=”_blank”>'+merged.items[i].title+'</a></li>' +
+          '<li>#'+merged.items[i].number+' by <a href="'+merged.items[i].user.html_url +
+          '" target="_blank">'+merged.items[i].user.login+'</a> was merged on ' +
+          merged.items[i].closed_at+'</li>' +
+          '</ul>';
       }
     } else {
       console.log('Failed to parse obj: ' + JSON.stringify(merged))
@@ -57,6 +60,6 @@
       fetchData();
     }
   }
-  
+
 })();
 </script>

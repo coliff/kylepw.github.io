@@ -21,9 +21,12 @@
       if (merged.constructor === Object && Object.keys(merged).length != 0) {
         for (let i in merged.items) {
           output +=
-          '<div class="pr">' +
-          '<a href="'+merged.items[i].html_url+'" target=”_blank”>'+merged.items[i].title+'</a>' +
-          '</div>';
+          '<ul class="pr" style="list-style: none;">' +
+          '<li><a href="'+merged.items[i].html_url+'" target=”_blank”>'+merged.items[i].title+'</a></li>' +
+          '<li>#'+merged.items[i].number+' by <a href="'+merged.items[i].user.html_url +
+          '" target="_blank">'+merged.items[i].user.login+'</a> was merged on ' +
+          merged.items[i].closed_at+'</li>' +
+          '</ul>';
         }
       } else {
         console.log('Failed to parse obj: ' + JSON.stringify(merged))
@@ -44,6 +47,7 @@
           sessionStorage.setItem(keyName, this.responseText)
           console.log('Response stored in session key '+"'"+keyName+"'")
           output = parseData(JSON.parse(this.responseText));
+          console.log(this.responseText);
         } else {
           console.log("Failed to fetch Github data: " + this.statusText);
           console.log(this.responseText)
