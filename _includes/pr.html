@@ -1,65 +1,6 @@
 <h2 {% if site.style == 'dark' %}class="text-white"{% endif %}>My Github Contributions</h2>
 <p class="f4 mb-4 {% if site.style == 'dark' %}text-white{% else %}text-gray{% endif %}">A list of my merged pull requests.</p>
-<div class="mb-4 {% if site.style == 'dark' %}text-white{% else %}text-gray{% endif %}" id="merged"></div>
 
-<script>
-(function () {
-  var keyName = 'kylepwMerged'
+<div class="d-sm-flex flex-wrap gutter-condensed mb-4" id="merged"></div>
 
-  /* @return {string} */
-  function parseData(merged) {
-    let output = '';
-    // Check if object and not empty
-    if (merged.constructor === Object && Object.keys(merged).length != 0) {
-      for (let i in merged.items) {
-        output +=
-          '<ul class="pr" style="list-style: none;">' +
-          '<li><a href="'+merged.items[i].html_url+'" target=”_blank”>'+merged.items[i].title+'</a></li>' +
-          '<li>#'+merged.items[i].number+' by <a href="'+merged.items[i].user.html_url +
-          '" target="_blank">'+merged.items[i].user.login+'</a> was merged on ' +
-          merged.items[i].closed_at+'</li>' +
-          '</ul>';
-      }
-    } else {
-      console.log('Failed to parse obj: ' + JSON.stringify(merged))
-    }
-    return output
-  }
-
-  /*
-  * Fetch merged PR data and display on DOM.
-  */
-  function fetchData() {
-    let xhr = new XMLHttpRequest();
-    xhr.open('GET', 'https://api.github.com/search/issues?q=is:pr+author:kylepw+archived:false+is:merged', true);
-
-    xhr.onload = function() {
-      let output = '';
-      if (this.status == 200) {
-        sessionStorage.setItem(keyName, this.responseText)
-        console.log('Response stored in session key '+"'"+keyName+"'")
-        output = parseData(JSON.parse(this.responseText));
-      } else {
-        console.log("Failed to fetch Github data: " + this.statusText);
-        console.log(this.responseText)
-        output = '<a href="https://github.com/pulls?q=is%3Apr+author%3Akylepw+archived%3Afalse+is%3Amerged" target=”_blank”>View</a>'
-      }
-      document.getElementById('merged').innerHTML = output
-    }
-    xhr.send();
-  }
-
-  window.onload = () => {
-    let output = '';
-    if (sessionStorage && sessionStorage.getItem(keyName)) {
-      console.log('using sessionStorage')
-      let merged = JSON.parse(sessionStorage.getItem(keyName))
-      document.getElementById('merged').innerHTML = parseData(merged);
-    } else {
-      console.log('using AJAX')
-      fetchData();
-    }
-  }
-
-})();
-</script>
+<script src="{{ "/assets/js/pr.js" }}"></script>
